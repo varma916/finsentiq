@@ -2,7 +2,8 @@
 import streamlit as st
 import plotly.graph_objects as go
 import sys
-sys.path.append("/content/finsentiq/services")
+import os
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../services"))
 from all_services import fetch_all_news, calculate_fear_greed
 
 st.title("Fear & Greed Meter")
