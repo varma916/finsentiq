@@ -2,17 +2,17 @@
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
-import os
 import sys
+import os
 from datetime import datetime
-sys.path.append("/content/finsentiq/services")
+
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../services"))
 from all_services import fetch_all_news, calculate_fear_greed
 
 st.title("Market Mood Tracker")
 st.markdown("Track how market sentiment changes over multiple searches")
 st.markdown("---")
 
-# Initialize mood history in session state
 if "mood_history" not in st.session_state:
     st.session_state.mood_history = []
 
@@ -33,16 +33,13 @@ if st.button("Track Mood Now"):
                 "score": score,
                 "meter": meter
             })
-
             st.success(f"Mood tracked! Score -> {score}/100 ({meter})")
     else:
         st.warning("Please enter a topic!")
 
-# Show mood chart if history exists
 if st.session_state.mood_history:
     st.markdown("---")
     st.subheader("Mood History Chart")
-
     df = pd.DataFrame(st.session_state.mood_history)
 
     fig = go.Figure()
@@ -55,9 +52,9 @@ if st.session_state.mood_history:
         marker = {"size": 10}
     ))
 
-    fig.add_hline(y=50, line_dash="dash", line_color="gray", annotation_text="Neutral (50)")
-    fig.add_hline(y=25, line_dash="dash", line_color="red",  annotation_text="Fear Zone (25)")
-    fig.add_hline(y=75, line_dash="dash", line_color="green",annotation_text="Greed Zone (75)")
+    fig.add_hline(y=50, line_dash="dash", line_color="gray",  annotation_text="Neutral (50)")
+    fig.add_hline(y=25, line_dash="dash", line_color="red",   annotation_text="Fear Zone (25)")
+    fig.add_hline(y=75, line_dash="dash", line_color="green", annotation_text="Greed Zone (75)")
 
     fig.update_layout(
         xaxis_title = "Time",
@@ -67,7 +64,6 @@ if st.session_state.mood_history:
     )
 
     st.plotly_chart(fig, use_container_width=True)
-
     st.markdown("---")
     st.subheader("Mood History Table")
     st.dataframe(df, use_container_width=True)

@@ -3,6 +3,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import sys
 import os
+
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../services"))
 from all_services import fetch_all_news, calculate_fear_greed
 
@@ -17,19 +18,17 @@ topic = st.selectbox(
 
 if st.button("Calculate Fear & Greed Score"):
     with st.spinner("Analyzing market sentiment..."):
-        headlines  = fetch_all_news(topic, max_results=8)
-        result     = calculate_fear_greed(headlines)
-        score      = result["score"]
-        meter      = result["meter"]
+        headlines = fetch_all_news(topic, max_results=8)
+        result    = calculate_fear_greed(headlines)
+        score     = result["score"]
+        meter     = result["meter"]
 
-        # Color based on score
         if score <= 20:   color = "red"
         elif score <= 40: color = "orange"
         elif score <= 60: color = "gray"
         elif score <= 80: color = "lightgreen"
         else:             color = "green"
 
-        # Plotly gauge chart
         fig = go.Figure(go.Indicator(
             mode  = "gauge+number",
             value = score,
@@ -53,11 +52,10 @@ if st.button("Calculate Fear & Greed Score"):
         ))
 
         st.plotly_chart(fig, use_container_width=True)
-
         st.markdown("---")
         col1, col2, col3 = st.columns(3)
-        col1.metric("Score",    f"{score}/100")
-        col2.metric("Meter",    meter)
+        col1.metric("Score",              f"{score}/100")
+        col2.metric("Meter",              meter)
         col3.metric("Headlines Analyzed", len(headlines))
 
         st.markdown("---")

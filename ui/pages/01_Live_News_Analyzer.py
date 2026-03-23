@@ -2,6 +2,7 @@
 import streamlit as st
 import sys
 import os
+
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../services"))
 from all_services import fetch_all_news, analyze_sentiment, detect_emotion
 

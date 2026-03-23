@@ -2,6 +2,7 @@
 import streamlit as st
 import sys
 import os
+
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../services"))
 from all_services import fetch_all_news, analyze_sentiment, fetch_stock_data
 
@@ -18,24 +19,19 @@ with col2:
 if st.button("Get Stock Sentiment"):
     if ticker and company:
         with st.spinner(f"Analyzing {ticker}..."):
-
-            # Fetch stock data
-            stock = fetch_stock_data(ticker)
-
-            # Fetch & analyze news
+            stock      = fetch_stock_data(ticker)
             headlines  = fetch_all_news(f"{company} stock", max_results=5)
             sentiments = [analyze_sentiment(h) for h in headlines]
             positive   = sum(1 for s in sentiments if s["sentiment"] == "POSITIVE")
             negative   = sum(1 for s in sentiments if s["sentiment"] == "NEGATIVE")
             overall    = "POSITIVE" if positive > negative else "NEGATIVE" if negative > positive else "NEUTRAL"
 
-            # Display stock info
             st.markdown("---")
             st.subheader(f"{ticker} Live Data")
             col1, col2, col3 = st.columns(3)
-            col1.metric("Current Price",  f"${stock['price']}")
-            col2.metric("Daily Change",   f"{stock['change']}%")
-            col3.metric("5 Day Trend",    stock["trend"])
+            col1.metric("Current Price", f"${stock['price']}")
+            col2.metric("Daily Change",  f"{stock['change']}%")
+            col3.metric("5 Day Trend",   stock["trend"])
 
             st.markdown("---")
             st.subheader("News Sentiment")
@@ -44,7 +40,6 @@ if st.button("Get Stock Sentiment"):
             col2.metric("Positive News",     positive)
             col3.metric("Negative News",     negative)
 
-            # Show headlines
             st.markdown("---")
             st.subheader("Headlines Analyzed")
             for i, (headline, sentiment) in enumerate(zip(headlines, sentiments), 1):
